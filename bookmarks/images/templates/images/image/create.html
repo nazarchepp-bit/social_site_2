@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Bookmark an image{% endblock %}
+
+{% block content %}
+  <h1>Bookmark an image</h1>
+
+  <div style="border: 2px solid green; padding: 15px; background: #f0fff0;">
+    <h3>✅ Image will be saved successfully!</h3>
+    <p><strong>URL:</strong> {{ request.GET.url }}</p>
+    <p><em>Preview is disabled due to security policies</em></p>
+  </div>
+
+  <form method="post" style="margin-top: 20px;">
+    {% csrf_token %}
+    <input type="hidden" name="url" value="{{ request.GET.url }}">
+
+    <div style="margin: 10px 0;">
+      <label><strong>Title:</strong></label><br>
+      <input type="text" name="title" value="{{ request.GET.title }}" required>
+    </div>
+
+    <textarea name="description" placeholder="Description (optional)"></textarea>
+
+    <input type="submit" value="Bookmark it!">
+  </form>
+{% endblock %}
