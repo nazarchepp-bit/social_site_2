@@ -27,12 +27,12 @@
 {% endblock %}
 
 {% block domready %}
-  var const = '{% url "user_follow" %}';
+  var url = '{% url "user_follow" %}';
   var options = {
     method: 'POST',
     headers: {'X-CSRFToken': csrftoken},
     mode: 'same-origin'
-  }
+  };
 
   document.querySelector('a.follow')
           .addEventListener('click', function(e){
@@ -45,11 +45,18 @@
     formData.append('action', followButton.dataset.action);
     options['body'] = formData;
 
+    console.log('Sending follow request:', {
+      id: followButton.dataset.id,
+      action: followButton.dataset.action,
+      url: url
+    });
+
     // отправить HTTP-запрос
     fetch(url, options)
     .then(response => response.json())
     .then(data => {
-      if (data['status'] === 'ok'
+      console.log('Received response:', data);
+      if (data['status'] === 'ok')
       {
         var previousAction = followButton.dataset.action;
 
@@ -61,9 +68,12 @@
         // обновить количество подписчиков
         var followerCount = document.querySelector('span.count .total');
         var totalFollowers = parseInt(followerCount.innerHTML);
-        followerCount.innerHTML = previousAction === 'follow' ? total Followers +1 :
-totalFollowers - 1;
+
+        followerCount.innerHTML = previousAction === 'follow' ? totalFollowers + 1 : totalFollowers - 1;
+      } else {
+        console.error('Server error:', data.message || 'Unknown error');
       }
     })
+    .catch(error => console.error('Error:', error));
   });
 {% endblock %}
